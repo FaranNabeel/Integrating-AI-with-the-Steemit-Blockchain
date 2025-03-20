@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Steemit-Inspired Analytics Dashboard</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #121212;
+      color: #e0e0e0;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    /* Login Screen Styles */
+    #login-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #1e1e1e, #292929);
+    }
+    .login-container {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 40px;
+      border-radius: 10px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    }
+    .login-container h1 {
+      margin-bottom: 20px;
+      font-weight: 500;
+      color: #ffffff;
+    }
+    .login-container p {
+      margin-bottom: 20px;
+      color: #cccccc;
+    }
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      font-size: 1em;
+    }
+    .login-container input::placeholder {
+      color: #888;
+    }
+    .login-container button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      background: #1CBBB4;
+      color: #121212;
+      font-size: 1em;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+    .login-container button:hover {
+      background: #17a3a0;
+    }
+    
+    /* Dashboard Styles */
+    #dashboard {
+      display: none;
+    }
+    header {
+      background: #1e1e1e;
+      color: #ffffff;
+      padding: 20px 0;
+      text-align: center;
+      border-bottom: 2px solid #1CBBB4;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2em;
+      font-weight: 500;
+    }
+    nav {
+      background: #1CBBB4;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 15px;
+      font-weight: 500;
+      color: #121212;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #ffffff;
+    }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    }
+    section {
+      margin-bottom: 30px;
+    }
+    section h2 {
+      color: #1CBBB4;
+      border-bottom: 2px solid #1CBBB4;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .code-block {
+      background: #2a2a2a;
+      padding: 15px;
+      border-left: 4px solid #1CBBB4;
+      font-family: Consolas, monospace;
+      white-space: pre-wrap;
+      margin: 15px 0;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    footer {
+      background: #1e1e1e;
+      color: #cccccc;
+      text-align: center;
+      padding: 15px 0;
+      border-top: 2px solid #1CBBB4;
+    }
+    @media (max-width: 768px) {
+      .container {
+        width: 95%;
+      }
+      header h1 {
+        font-size: 1.5em;
+      }
+      nav a {
+        margin: 0 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Login Screen -->
+  <div id="login-screen">
+    <div class="login-container">
+      <h1>Welcome Back</h1>
+      <p>Sign in to access your dashboard</p>
+      <input type="text" id="username" placeholder="Username">
+      <input type="password" id="password" placeholder="Password">
+      <button id="login-btn">Login</button>
+    </div>
+  </div>
+  
+  <!-- Main Dashboard -->
+  <div id="dashboard">
+    <header>
+      <h1>Steemit Analytics Dashboard</h1>
+    </header>
+    
+    <nav>
+      <a href="#overview">Overview</a>
+      <a href="#data">Data Retrieval</a>
+      <a href="#sentiment">Sentiment</a>
+      <a href="#visualization">Visualization</a>
+      <a href="#settings">Settings</a>
+    </nav>
+    
+    <div class="container">
+      <!-- Overview Section -->
+      <section id="overview">
+        <h2>Overview</h2>
+        <p>
+          This dashboard integrates blockchain data and AI-driven analytics to provide detailed insights into your Steemit activity. Optimize your content with data on post performance, sentiment analysis, and more.
+        </p>
+      </section>
+      
+      <!-- Data Retrieval Section -->
+      <section id="data">
+        <h2>Data Retrieval &amp; Preprocessing</h2>
+        <p>
+          The system connects to the Steemit blockchain to fetch recent posts, extracting key information such as title, body, creation date, net votes, and payout values for in-depth analysis.
+        </p>
+        <div class="code-block">
+          <code>
+from beem import Steem
+import pandas as pd
+
+steem = Steem()
+
+def get_recent_posts(author, limit=10):
+    posts = steem.get_discussions_by_blog({"tag": author, "limit": limit})
+    data = []
+    for post in posts:
+        data.append({
+            'title': post.get('title', ''),
+            'body': post.get('body', ''),
+            'created': post.get('created', ''),
+            'net_votes': post.get('net_votes', 0),
+            'pending_payout_value': float(post.get('pending_payout_value', '0').split()[0])
+        })
+    return pd.DataFrame(data)
+
+df_posts = get_recent_posts("steemitblog", limit=5)
+print(df_posts.head())
+          </code>
+        </div>
+      </section>
+      
+      <!-- Sentiment Analysis Section -->
+      <section id="sentiment">
+        <h2>Sentiment Analysis</h2>
+        <p>
+          Using NLTK’s VADER model, the dashboard analyzes the sentiment of each post, determining whether content is positive, negative, or neutral.
+        </p>
+        <div class="code-block">
+          <code>
+import nltk
+from nltk.sentiment import SentimentIntensityAnalyzer
+
+nltk.download('vader_lexicon')
+sia = SentimentIntensityAnalyzer()
+
+def analyze_sentiment(text):
+    sentiment = sia.polarity_scores(text)
+    return sentiment['compound']
+
+df_posts['sentiment'] = df_posts['body'].apply(analyze_sentiment)
+print(df_posts[['title', 'sentiment']])
+          </code>
+        </div>
+      </section>
+      
+      <!-- Visualization Section -->
+      <section id="visualization">
+        <h2>Interactive Visualization</h2>
+        <p>
+          Dynamic charts illustrate the relationship between post metrics and sentiment, helping you understand and improve your performance.
+        </p>
+        <div class="code-block">
+          <code>
+import plotly.express as px
+
+fig = px.scatter(df_posts, x='net_votes', y='pending_payout_value',
+                 color='sentiment', size='pending_payout_value',
+                 hover_data=['title'], title='Post Rewards Analysis')
+fig.show()
+          </code>
+        </div>
+      </section>
+      
+      <!-- Settings Section -->
+      <section id="settings">
+        <h2>Settings</h2>
+        <p>
+          Customize your dashboard preferences including update frequency, data sources, and notifications.
+        </p>
+      </section>
+    </div>
+    
+    <footer>
+      <p>© 2025 Steemit Analytics Dashboard</p>
+    </footer>
+  </div>
+  
+  <script>
+    // Simple JavaScript to simulate login and show the dashboard
+    document.getElementById('login-btn').addEventListener('click', function() {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+    });
+  </script>
+  
+</body>
+</html>
